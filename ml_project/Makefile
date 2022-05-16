@@ -9,6 +9,8 @@ BUCKET = [OPTIONAL] your-bucket-for-syncing-data (do not include 's3://')
 PROFILE = default
 PROJECT_NAME = ZibyLC
 PYTHON_INTERPRETER = python3
+INPUT_FILE = data/raw/heart_cleveland_upload.csv
+OUTPUT_FILE = data/raw/heart_cleveland_upload_proceeded.csv
 
 ifeq (,$(shell which conda))
 HAS_CONDA=False
@@ -27,7 +29,8 @@ requirements: test_environment
 
 ## Make Dataset
 data: requirements
-	$(PYTHON_INTERPRETER) src/data/make_dataset.py data/raw data/processed
+	$(PYTHON_INTERPRETER) src/data/make_dataset.py $(INPUT_FILE) $(OUTPUT_FILE)
+
 
 ## Delete all compiled Python files
 clean:

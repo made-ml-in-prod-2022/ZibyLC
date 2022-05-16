@@ -7,9 +7,9 @@ import pandas as pd
 
 
 @click.command()
-@click.argument('input_filepath', type=click.Path(exists=True))
-@click.argument('output_filepath', type=click.Path())
-def main(input_filepath, output_filepath, features: list = []):
+@click.argument('input_filepath', type=click.Path(exists=True), default='data/raw/heart_cleveland_upload.csv')
+@click.argument('output_filepath', type=click.Path(), default='data/raw/heart_cleveland_upload_proceeded.csv')
+def main(input_filepath, output_filepath):
     """ Runs data processing scripts to turn raw data from (../raw) into
         cleaned data ready to be analyzed (saved in ../processed).
     """
@@ -18,7 +18,9 @@ def main(input_filepath, output_filepath, features: list = []):
 
     df = pd.read_csv(input_filepath)
     logger.info(f'file {input_filepath} reading successfully finished')
-    df[features].to_csv(path_or_buf=output_filepath, index=False)
+    df.dropna(inplace=True)
+    logger.info(f'preprocessing successfully complited')
+    df.to_csv(path_or_buf=output_filepath, index=False)
     logger.info(f'dataset successfully dumped in {output_filepath}')
 
 

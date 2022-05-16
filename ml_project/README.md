@@ -3,6 +3,15 @@ ml_project
 
 ml in prod homework 1
 
+# ML production ready project example
+## How to use
+#### Dag of train pipeline is implemented with *Makefile*.
+To run data preparation from console use command {input_filepath, output_filepath}:
+```commandline
+cd ml_project
+python src/data/make_dataset.py data/raw/heart_cleveland_upload.csv data/raw/heart_cleveland_upload_proceeded.csv
+```
+
 Project Organization
 ------------
 

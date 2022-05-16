@@ -1,42 +1,36 @@
+# -*- coding: utf-8 -*-
 import click
-import pandas as pd
 import logging
-import pickle
-from sklearn.model_selection import train_test_split
+from pathlib import Path
+from dotenv import find_dotenv, load_dotenv
+import pandas as pd
+
 
 @click.command()
-@click.argument('model')
+@click.argument('model_path')
 @click.argument('data_path')
-@click.argument('features')
-@click.argument('target')
-@click.argument('params')
-def train(model, data_path, features, target, params):
-    logger = logging.getLogger('Train')
+def main(model_path, data_path):
+    """ Runs data processing scripts to turn raw data from (../raw) into
+        cleaned data ready to be analyzed (saved in ../processed).
+    """
+    logger = logging.getLogger(__name__)
+    logger.info('making final data set from raw data')
+
     df = pd.read_csv(data_path)
-    logger.info('read dataset at {}'.format(data_path))
-    x_train, x_valid, y_train, y_valid = train_test_split(df[features], target,
-                                                            train_size=params.train_size,
-                                                            random_state=params.random_state,
-                                                            shuffle=params.shuffle, stratify=target)
-
-    logger.info('Split dataset\n\t{}'.format(split_params))
-    model = model(x_train, y_train)
-
-    logger.info('features\n\t{}'.format(params.features))
-    logger.info('Preprocessing\n\t{}'.format(params.transformers))
-
-    pred_train = predict_model(model, x_train, params)
-    pred_valid = predict_model(model, x_valid, params)
-    train_metrics = calculate_metrics(y_train, pred_train, params)
-    valid_metrics = calculate_metrics(y_valid, pred_valid, params)
-    logger.info('train metrics: \n\t{}'.format(train_metrics))
-    logger.info('valid_metrics \n\t{}'.format(valid_metrics))
-
-    with open(params.model_path, 'wb') as file:
-        pickle.dump(model, file)
-        logger.info('save model at {}'.format(params.model_path))
+    logger.info(f'file {data_path} reading successfully finished')
+    df[features].to_csv(path_or_buf=output_filepath, index=False)
+    logger.info(f'dataset successfully dumped in {output_filepath}')
 
 
 if __name__ == '__main__':
-    train()
+    log_fmt = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    logging.basicConfig(level=logging.INFO, format=log_fmt)
 
+    # not used in this stub but often useful for finding various files
+    project_dir = Path(__file__).resolve().parents[2]
+
+    # find .env automagically by walking up directories until it's found, then
+    # load up the .env entries as environment variables
+    load_dotenv(find_dotenv())
+
+    main()
