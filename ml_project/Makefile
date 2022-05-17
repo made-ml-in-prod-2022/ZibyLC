@@ -34,19 +34,19 @@ requirements: test_environment
 
 ## Make Dataset
 data: requirements
-	$(PYTHON_INTERPRETER) src/data/make_dataset.py $(INPUT_FILE) $(OUTPUT_FILE_TRAIN) $(OUTPUT_FILE_TEST)
+	$(PYTHON_INTERPRETER) src/data/make_dataset.py input_filepath=$(INPUT_FILE) output_filepath_train=$(OUTPUT_FILE_TRAIN) output_filepath_test=$(OUTPUT_FILE_TEST)
 
 ## Make EDA
-data: requirements
+eda: requirements
 	$(PYTHON_INTERPRETER) reports/eda.py
 
 ## Make train
-data: requirements
-	$(PYTHON_INTERPRETER) src/models/train_model.py $(TRAIN_FILE) $(MODEL_FILE)
+train: requirements
+	$(PYTHON_INTERPRETER) src/models/train_model.py data_path=$(TRAIN_FILE) model_path=$(MODEL_FILE)
 
 ## Make predict
-data: requirements
-	$(PYTHON_INTERPRETER) src/models/predict_model.py $(TEST_FILE) $(MODEL_FILE) $(MODEL_PREDICTION)
+predict: requirements
+	$(PYTHON_INTERPRETER) src/models/predict_model.py data_path=$(TEST_FILE) model_path=$(MODEL_FILE) result_path=$(MODEL_PREDICTION)
 
 
 ## Delete all compiled Python files
