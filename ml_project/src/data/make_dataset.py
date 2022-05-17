@@ -37,6 +37,7 @@ def main(input_filepath, output_filepath_train, output_filepath_test=''):
 
     if make_split:
         train_df, test_df = train_test_split(df, test_size=0.2, stratify=df['target'], random_state=103)
+        test_df.drop(columns=['target'], inplace=True) # no labels for prediction
         logger.info(f'data splited on train/test')
     else:
         train_df = df

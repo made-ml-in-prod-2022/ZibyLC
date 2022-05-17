@@ -6,14 +6,14 @@ ml in prod homework 1
 # ML production ready project example
 ## How to use
 #### Dag of train pipeline is implemented with *Makefile*.
-To run data preparation from console use command {input_filepath, output_filepath}:
+To run data preparation from console use command with args {input_filepath, output_filepath_train, output_filepath_test}:
 ```commandline
 cd ml_project
-python src/data/make_dataset.py
+python src/data/make_dataset.py data/raw/heart_cleveland_upload.csv data/processed/train.csv data/processed/test.csv
 ```
 or (with Make:)
 ```commandline
-Make dataset
+make dataset input_filepath=data/raw/heart_cleveland_upload.csv output_filepath_train=data/processed/train.csv output_filepath_test=data/processed/test.csv
 ```
 
 To run eda from console use command:
@@ -23,8 +23,29 @@ python reports/eda.py
 ```
 or (with Make:)
 ```commandline
-Make eda
+make eda
 ```
+
+To train model from console use command with args {data_path, model_path}:
+```commandline
+cd ml_project
+python src/models/train_model.py data/processed/train.csv models/estimator.pkl
+```
+or (with Make:)
+```commandline
+make train data_path=data/processed/train.csv model_path=models/estimator.pkl
+```
+
+To predict from console use command with args {data_path, model_path, result_path}:
+```commandline
+cd ml_project
+python src/models/predict_model.py data/processed/test.csv models/estimator.pkl data/processed/predict_proba.csv
+```
+or (with Make:)
+```commandline
+make predict data_path=data/processed/test.csv model_path=models/estimator.pkl result_path=data/processed/predict_proba.csv
+```
+
 
 Project Organization
 ------------

@@ -25,7 +25,9 @@ def main(data_path, model_path, result_path):
     estimator = load(model_path)
     logger.info(f'classifier from {model_path} successfully extracted')
     features = list(df.columns)
-    features.remove(TARGET)
+    if TARGET in features:
+        features.remove(TARGET)
+        logger.info(f'Test dataset {data_path} contains train column. Suspicious column removed')
     X = df[features] #used skiti-learn like style
     logger.info(f'Got X from dataframe according to features list')
     proba = estimator.predict_proba(X)[:, 0]
