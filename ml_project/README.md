@@ -9,7 +9,21 @@ ml in prod homework 1
 To run data preparation from console use command {input_filepath, output_filepath}:
 ```commandline
 cd ml_project
-python src/data/make_dataset.py data/raw/heart_cleveland_upload.csv data/raw/heart_cleveland_upload_proceeded.csv
+python src/data/make_dataset.py
+```
+or (with Make:)
+```commandline
+Make dataset
+```
+
+To run eda from console use command:
+```commandline
+cd ml_project
+python reports/eda.py
+```
+or (with Make:)
+```commandline
+Make eda
 ```
 
 Project Organization

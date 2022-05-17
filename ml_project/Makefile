@@ -10,7 +10,12 @@ PROFILE = default
 PROJECT_NAME = ZibyLC
 PYTHON_INTERPRETER = python3
 INPUT_FILE = data/raw/heart_cleveland_upload.csv
-OUTPUT_FILE = data/raw/heart_cleveland_upload_proceeded.csv
+OUTPUT_FILE_TRAIN = data/processed/train.csv
+OUTPUT_FILE_TEST = data/processed/test.csv
+TRAIN_FILE = OUTPUT_FILE_TRAIN
+TEST_FILE = OUTPUT_FILE_TEST
+MODEL_FILE = models/estimator.pkl
+MODEL_PREDICTION = data/processed/predict_proba.csv
 
 ifeq (,$(shell which conda))
 HAS_CONDA=False
@@ -29,11 +34,19 @@ requirements: test_environment
 
 ## Make Dataset
 data: requirements
-	$(PYTHON_INTERPRETER) src/data/make_dataset.py $(INPUT_FILE) $(OUTPUT_FILE)
+	$(PYTHON_INTERPRETER) src/data/make_dataset.py $(INPUT_FILE) $(OUTPUT_FILE_TRAIN) $(OUTPUT_FILE_TEST)
 
 ## Make EDA
 data: requirements
 	$(PYTHON_INTERPRETER) reports/eda.py
+
+## Make train
+data: requirements
+	$(PYTHON_INTERPRETER) src/models/train_model.py $(TRAIN_FILE) $(MODEL_FILE)
+
+## Make predict
+data: requirements
+	$(PYTHON_INTERPRETER) src/models/predict_model.py $(TEST_FILE) $(MODEL_FILE) $(MODEL_PREDICTION)
 
 
 ## Delete all compiled Python files

@@ -4,22 +4,33 @@ import logging
 from pathlib import Path
 from dotenv import find_dotenv, load_dotenv
 import pandas as pd
+from sklearn.linear_model import LogisticRegression
+from joblib import dump
+
+TARGET = "target"
 
 
 @click.command()
-@click.argument('model_path')
-@click.argument('data_path')
-def main(model_path, data_path):
-    """ Runs data processing scripts to turn raw data from (../raw) into
-        cleaned data ready to be analyzed (saved in ../processed).
+@click.argument('data_path', type=click.Path(), default='data/processed/train.csv')
+@click.argument('model_path', type=click.Path(), default='models/estimator.pkl')
+def main(data_path, model_path):
+    """ Trains model, returns estimator.
     """
     logger = logging.getLogger(__name__)
-    logger.info('making final data set from raw data')
+    logger.info('training model')
 
     df = pd.read_csv(data_path)
     logger.info(f'file {data_path} reading successfully finished')
-    df[features].to_csv(path_or_buf=output_filepath, index=False)
-    logger.info(f'dataset successfully dumped in {output_filepath}')
+    estimator = LogisticRegression(random_state=103)
+    features = list(df.columns)
+    features.remove(TARGET)
+    X = df[features] #used skiti-learn like style
+    y = df[TARGET] #used skiti-learn like style
+    logger.info(f'df splitted on X, y according to features/target list')
+    estimator.fit(X, y)
+    logger.info(f'model successfully fitted')
+    dump(estimator, model_path)
+    logger.info(f'model successfully dumped in {model_path}')
 
 
 if __name__ == '__main__':
