@@ -6,6 +6,7 @@ import uvicorn
 from fastapi import FastAPI
 
 from src.models import ModelInput, ModelOutput, make_prediction
+from src.s3_loader import s3_loader
 
 MODEL_FOLDER = 'models'
 MODEL_FILE = 'estimator.pkl'
@@ -28,6 +29,16 @@ def load_model():
         error = f"Model is not provided: model_path is absent:\n{model_path}"
         instance_logger_object.error(error)
         raise RuntimeError(error)
+    global model
+    model = joblib.load(model_path)
+    instance_logger_object.info('Model is successfully loaded')
+
+@app.on_event('load_from_s3')
+def load_from_s3():
+    """Load model from s3"""
+    instance_logger_object = logging.getLogger(__name__)
+    instance_logger_object.info('Loading model...')
+    s3_loader()
     global model
     model = joblib.load(model_path)
     instance_logger_object.info('Model is successfully loaded')
