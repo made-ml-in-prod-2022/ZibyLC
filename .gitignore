@@ -127,3 +127,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+airflow_ml_dags/logs/scheduler/latest

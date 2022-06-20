@@ -11,22 +11,23 @@ import pandas as pd
 
 from sklearn.datasets import make_classification
 
-
 logger = logging.getLogger("airflow.task")
+RANDOM_STATE = 57
 
 
-def generate_xy(raw_file_location):
-    X, y = make_classification(n_features=2, n_redundant=0, n_informative=2, random_state=1, n_clusters_per_class=1)
-    rng = np.random.RandomState(2)
+def generate_features_and_target(raw_file_location):
+    X, y = make_classification(n_features=2, n_redundant=0, n_informative=2, random_state=RANDOM_STATE,
+                               n_clusters_per_class=1)
+    rng = np.random.RandomState(RANDOM_STATE)
     X += 2 * rng.uniform(size=X.shape)
 
     pd.DataFrame(X).to_csv(raw_file_location + 'data.csv', index=False)
     pd.DataFrame(y).to_csv(raw_file_location + 'target.csv', index=False)
-    LoggingMixin().log.info(f"Samples are stored in {file_location}")
+    LoggingMixin().log.info(f"Samples are stored in {raw_file_location}")
 
 
 with DAG(
-        'data_preparation',
+        'prepare_data',
         schedule_interval='@daily',
         catchup=False,
         max_active_runs=1,
@@ -38,18 +39,17 @@ with DAG(
             'retry_delay': timedelta(seconds=15)
         }
 ) as dag:
-
-    raw_mkdir = BashOperator(
-        task_id='raw_mkdir',
+    mkdir_raw = BashOperator(
+        task_id='mkdir_raw',
         bash_command='mkdir -p /opt/airflow/data/raw/{{ ds }}',
         dag=dag,
     )
 
-    generate_xy_task = PythonOperator(
+    task_generate_features_and_target = PythonOperator(
         task_id='build_project',
-        python_callable=generate_xy,
+        python_callable=generate_features_and_target,
         dag=dag,
         op_kwargs={'raw_file_location': '/opt/airflow/data/raw/{{ ds }}/'},
     )
 
-    raw_mkdir >> generate_xy_task
+    mkdir_raw >> task_generate_features_and_target
