@@ -12,9 +12,8 @@ from joblib import load
 logger = logging.getLogger("airflow.task")
 
 
-def predict(raw_file_location, predictions_file_location):
-    model_path = Variable.get("model_path")
-    clf = load(model_path)
+def predict(raw_file_location, predictions_file_location, model_file_location):
+    clf = load(model_file_location + 'model.joblib')
     X = pd.read_csv(raw_file_location + 'data.csv')
     pd.DataFrame(clf.predict(X)).to_csv(predictions_file_location + 'predictions.csv', index=False)
 
@@ -45,6 +44,7 @@ with DAG(
         op_kwargs={
             'raw_file_location': '/opt/airflow/data/raw/{{ ds }}/',
             'predictions_file_location': '/opt/airflow/data/predictions/{{ ds }}/',
+            'model_file_location': '/opt/airflow/data/models/{{ ds }}/',
         },
     )
 
